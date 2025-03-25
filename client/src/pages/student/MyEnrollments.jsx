@@ -1,0 +1,131 @@
+import React, { useContext, useState } from "react";
+import { AppContext } from "../../context/AppContext";
+import { Line } from "rc-progress";
+import Footer from "../../components/student/Footer";
+
+const MyEnrollments = () => {
+  const { enrolledCourses, calculateCourseDuration, navigate } = useContext(AppContext);
+
+  // Hardcoded progressArray
+  const [progressArray] = useState([
+    { lectureCompleted: 2, totalLectures: 4 },
+    { lectureCompleted: 1, totalLectures: 5 },
+    { lectureCompleted: 3, totalLectures: 6 },
+    { lectureCompleted: 4, totalLectures: 4 },
+    { lectureCompleted: 0, totalLectures: 3 },
+    { lectureCompleted: 5, totalLectures: 7 },
+    { lectureCompleted: 6, totalLectures: 8 },
+    { lectureCompleted: 2, totalLectures: 6 },
+    { lectureCompleted: 4, totalLectures: 10 },
+    { lectureCompleted: 3, totalLectures: 5 },
+    { lectureCompleted: 7, totalLectures: 7 },
+    { lectureCompleted: 1, totalLectures: 4 },
+    { lectureCompleted: 0, totalLectures: 2 },
+    { lectureCompleted: 5, totalLectures: 5 },
+  ]);
+
+  return (
+    <>
+      <div className="md:px-36 px-8 pt-10">
+        <h1 className="text-2xl font-semibold text-gray-800">My Enrollments</h1>
+        <table className="w-full mt-10 border-collapse">
+          <thead className="bg-gray-50">
+            <tr className="text-gray-900 text-sm text-left">
+              <th className="px-4 py-3 font-semibold">Course</th>
+              <th className="px-4 py-3 font-semibold">Duration</th>
+              <th className="px-4 py-3 font-semibold">Completed</th>
+              <th className="px-4 py-3 font-semibold">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {enrolledCourses.map((course, index) => {
+              // Get progress for the current course
+              const progress = progressArray[index];
+
+              // Calculate progress percentage
+              const progressPercent = progress
+                ? (progress.lectureCompleted / progress.totalLectures) * 100
+                : 0;
+
+              return (
+                <tr
+                  key={index}
+                  className="border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200"
+                >
+                  {/* Course Column */}
+                  <td className="px-4 py-4">
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={course.courseThumbnail}
+                        alt={course.courseTitle}
+                        className="w-14 sm:w-24 md:w-28 rounded-lg"
+                      />
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-800">
+                          {course.courseTitle}
+                        </p>
+                        {/* Progress Bar */}
+                        <div className="mt-2">
+                          <Line
+                            percent={progressPercent}
+                            strokeWidth={2}
+                            strokeColor="#3B82F6" // Blue color
+                            trailWidth={2}
+                            trailColor="#E5E7EB" // Gray color
+                            className="w-full"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Duration Column */}
+                  <td className="px-4 py-4 text-gray-700">
+                    {calculateCourseDuration(course)}
+                  </td>
+
+                  {/* Completed Column */}
+                  <td className="px-4 py-4 text-gray-700">
+                    <div className="flex items-center gap-2">
+                      {progress ? (
+                        <>
+                          <span className="font-medium">
+                            {progress.lectureCompleted} / {progress.totalLectures}
+                          </span>
+                          <span className="text-sm text-gray-500">Lectures</span>
+                        </>
+                      ) : (
+                        <span className="text-sm text-gray-500">No progress data</span>
+                      )}
+                    </div>
+                  </td>
+
+                  {/* Status Column */}
+                  <td className="px-4 py-4">
+                    <button
+                      className="px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-medium hover:bg-blue-200 transition-colors duration-200"
+                      onClick={() => navigate("/player/" + course._id)}
+                    >
+                      {progress ? (
+                        progress.lectureCompleted === progress.totalLectures ? (
+                          "Completed"
+                        ) : (
+                          "Ongoing"
+                        )
+                      ) : (
+                        "No progress data"
+                      )}
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <Footer/>
+    </>
+  );
+};
+
+export default MyEnrollments;
