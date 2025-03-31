@@ -1,22 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { dummyStudentEnrolled } from '../../assets/assets';
 import Loading from '../../components/student/Loading';
+import { AppContext } from '../../context/AppContext';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const StudentsEnrolled = () => {
+  const{backendUrl,getToken,isEducator}=useContext(AppContext);
   const [enrolledStudents, setEnrolledStudents] = useState(null);
 
   const fetchEnrolledStudents = async () => {
-    // Simulate fetching data (replace with actual API call)
-    setEnrolledStudents(dummyStudentEnrolled);
+    try {
+      const token=await getToken();
+      const{data}=await axios.get(backendUrl+'/api/educator/enrolled-students',{headers:{Authorization:`Bearer ${token}`}});
+      if(data.success){
+        setEnrolledStudents(data.enrolledStudents.reverse());
+      }else{
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   useEffect(() => {
-    fetchEnrolledStudents();
-  }, []);
+    if(isEducator){
+      fetchEnrolledStudents();
+      
+    }
+  }, [isEducator]);
 
   if (!enrolledStudents) {
     return <Loading />;
   }
+  console.log(enrolledStudents);
 
   return (
     <div className="p-6">
@@ -48,7 +65,7 @@ const StudentsEnrolled = () => {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <img
-                      src={student.student.imageUrl}
+                      src={student.student.imageURL}
                       alt={student.student.name}
                       className="w-10 h-10 rounded-full object-cover"
                     />
@@ -61,7 +78,7 @@ const StudentsEnrolled = () => {
                   {student.courseTitle}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(student.purchaseDate).toLocaleDateString()}
+                  {new Date(student.purchaseData).toLocaleDateString()}
                 </td>
               </tr>
             ))}

@@ -1,8 +1,8 @@
 import Stripe from "stripe";
 import Course from "../models/Course.js";
+import CourseProgress from "../models/CourseProgress.js";
 import Purchase from "../models/Purchase.js";
 import User from "../models/User.js";
-import CourseProgress from "../models/CourseProgress.js";
 
 //get user
 export const getUserData=async(req,res)=>{
@@ -35,7 +35,9 @@ export const userEnrolledCourses=async(req,res)=>{
 //Purchase course
 export const purchaseCourse=async(req,res)=>{
     try{
-        const{courseId}=req.body;
+        console.log(req.auth);
+        console.log("p khatam");
+        const{courseId}=req.body; 
         const{origin}=req.headers;
         const userId=req.auth.userId;
         const userData=await User.findById(userId);
@@ -118,11 +120,11 @@ export const getUserCourseProgress=async(req,res)=>{
     }
 }
 
-export const addUserRating=async(req,res)=>{
+export const addUserRating=async (req,res)=>{
     const userId=req.auth.userId;
     const {courseId,rating}=req.body;
     if(!courseId || !userId || !rating || rating<1 || rating>5){
-        return res.json({success:false,message:'Invalid Details'});
+        return res.json({success:false,message:'Invaaaalid Details'});
     }
     try{
         const course=await Course.findById(courseId);

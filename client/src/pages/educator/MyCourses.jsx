@@ -1,16 +1,29 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { AppContext } from '../../context/AppContext';
-import Loading from '../../components/student/Loading';
+import React, { useContext, useEffect, useState } from "react";
+import { AppContext } from "../../context/AppContext";
+import Loading from "../../components/student/Loading";
+import axios from "axios";
 
 const MyCourses = () => {
-  const { currency, allCourses } = useContext(AppContext);
+  const { currency, backendUrl, getToken, isEducator } = useContext(AppContext);
   const [courses, setCourses] = useState(null);
 
-  useEffect(() => {
-    if (allCourses) {
-      setCourses(allCourses);
+  const fetchEducatorCourses = async () => {
+    try {
+      const token = await getToken();
+      const { data } = await axios.get(backendUrl + "/api/educator/courses", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      data.success && setCourses(data.courses);
+
+    } catch (error) {
+      toast.error(error.message);
     }
-  }, [allCourses]);
+  };
+  useEffect(() => {
+    if (isEducator) {
+      fetchEducatorCourses();
+    }
+  }, [isEducator]);
 
   if (!courses) {
     return <Loading />;
@@ -40,7 +53,8 @@ const MyCourses = () => {
           <tbody className="divide-y divide-gray-200">
             {courses.map((course) => {
               // Calculate earnings: coursePrice * number of students enrolled
-              const earnings = course.coursePrice * course.enrolledStudents.length;
+              const earnings =
+                course.coursePrice * course.enrolledStudents.length;
 
               return (
                 <tr key={course._id}>

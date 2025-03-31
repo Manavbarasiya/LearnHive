@@ -2,18 +2,39 @@ import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { assets, dummyDashboardData, dummyStudentEnrolled } from "../../assets/assets";
 import Loading from "../../components/student/Loading";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
-  const { currency } = useContext(AppContext);
+  const { currency,backendUrl,getToken, isEducator} = useContext(AppContext);
   const [dashboardData, setDashBoardData] = useState(null);
 
   const fetchDashboardData = async () => {
-    setDashBoardData(dummyDashboardData);
+    try {
+      const token = await getToken();
+      const { data } = await axios.get(
+        backendUrl + "/api/educator/dashboard",
+        { headers: { Authorization: `Bearer ${token}` } } 
+      );
+
+      if(data.success){
+        setDashBoardData(data.dashboardData);
+        console.log(data.dashboardData);
+      }else{
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    if(isEducator){
+      fetchDashboardData();
+    }
+  }, [isEducator]);
+  
+  
 
   return dashboardData ? (
     <div className="min-h-screen flex flex-col items-start justify-between gap-8 md:p-8 md:pb-0 p-4 pt-8 pb-0">
@@ -71,12 +92,12 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {dummyStudentEnrolled.map((enrollment, index) => (
+                {dashboardData.enrolledStudentsData.map((enrollment, index) => (
                   <tr key={index} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center">
                         <img
-                          src={enrollment.student.imageUrl}
+                          src={enrollment.student.imageURL}
                           alt={enrollment.student.name}
                           className="w-10 h-10 rounded-full object-cover"
                         />
@@ -89,7 +110,7 @@ const Dashboard = () => {
                       {enrollment.courseTitle}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
-                      {new Date(enrollment.purchaseDate).toLocaleDateString()}
+                      {new Date(enrollment.purchaseData).toLocaleDateString()}
                     </td>
                   </tr>
                 ))}

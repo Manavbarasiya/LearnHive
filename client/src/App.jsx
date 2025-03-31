@@ -17,10 +17,12 @@ import Resources from "./components/educator/Resources";
 import Community from "./components/educator/Community";
 import Support from "./components/educator/Support";
 import "quill/dist/quill.snow.css";
+import { ToastContainer, toast } from 'react-toastify';
 const App = () => {
   const isEducatorRoute=useMatch('/educator/*');
   return (
     <div className="text-default min-h-screen bg-white">
+      <ToastContainer/>
       {!isEducatorRoute && <Navbar/>}
       <Routes>
         <Route path="/" element={<Home />} />

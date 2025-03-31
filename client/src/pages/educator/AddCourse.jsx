@@ -1,6 +1,9 @@
+import axios from "axios";
 import Quill from "quill";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import { assets } from "../../assets/assets";
+import { AppContext } from "../../context/AppContext";
 
 const AddCourse = () => {
   const quillRef = useRef(null);
@@ -12,6 +15,8 @@ const AddCourse = () => {
   const [chapters, setChapters] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [currentChapterId, setCurrentChapterId] = useState(null);
+
+  const { backendUrl, getToken } = useContext(AppContext);
 
   const [lectureDetails, setLectureDetails] = useState({
     lectureTitle: "",
@@ -50,6 +55,7 @@ const AddCourse = () => {
       );
     }
   };
+  
   const handleLecture = (action, chapterId, lectureIndex) => {
     if (action === "add") {
       setCurrentChapterId(chapterId);
@@ -91,8 +97,62 @@ const AddCourse = () => {
     });
   };
   const handleSubmit = async (e) => {
-    e.preventDefault();
-  };
+    try {
+        e.preventDefault();
+        if (!image) {
+            toast.error("Thumbnail not selected");
+            return;
+        }
+
+
+        const token = await getToken();
+
+        if (!token) {
+            toast.error("Authentication failed, please login again.");
+            return;
+        }
+
+        const courseData = {
+            courseTitle,
+            courseDescription: quillRef.current.root.innerHTML,
+            coursePrice: Number(coursePrice),
+            discount: Number(discount),
+            courseContent: chapters,
+        };
+
+        const formData = new FormData();
+        formData.append("courseData", JSON.stringify(courseData));
+        formData.append("image", image);
+
+
+        const { data } = await axios.post(
+            backendUrl + "/api/educator/add-course",
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
+
+        if (data.success) {
+            toast.success(data.message);
+            setCourseTitle("");
+            setCoursePrice(0);
+            setDiscount(0);
+            setImage(null);
+            setChapters([]);
+            quillRef.current.root.innerHTML = "";
+        } else {
+            toast.error(data.message);
+        }
+    } catch (error) {
+        console.error("❌ Error submitting course:", error);
+        toast.error(error.message);
+    }
+};
+
   useEffect(() => {
     if (!quillRef.current && editorRef.current) {
       quillRef.current = new Quill(editorRef.current, {
