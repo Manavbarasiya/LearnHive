@@ -135,8 +135,9 @@ const AddCourse = () => {
                 },
             }
         );
-
+        console.log("checking");
         if (data.success) {
+          console.log("in success");
             toast.success(data.message);
             setCourseTitle("");
             setCoursePrice(0);
@@ -145,6 +146,7 @@ const AddCourse = () => {
             setChapters([]);
             quillRef.current.root.innerHTML = "";
         } else {
+          console.log("int otast error")
             toast.error(data.message);
         }
     } catch (error) {
