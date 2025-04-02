@@ -27,7 +27,7 @@ const AddCourse = () => {
   const uniqid = () =>
     Math.random().toString(36).substring(2) + Date.now().toString(36);
   const handleChapter = (action, chapterId) => {
-    console.log("CLicked");
+
     if (action === "add") {
       const title = prompt("Enter chapter name");
       if (title) {

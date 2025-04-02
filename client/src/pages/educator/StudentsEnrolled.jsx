@@ -33,7 +33,6 @@ const StudentsEnrolled = () => {
   if (!enrolledStudents) {
     return <Loading />;
   }
-  console.log(enrolledStudents);
 
   return (
     <div className="p-6">

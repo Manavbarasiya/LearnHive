@@ -25,7 +25,8 @@ export const userEnrolledCourses=async(req,res)=>{
     try{
         const userId=req.auth.userId;
         const userData=await User.findById(userId).populate('enrolledoCourses');
-        res.json({success:true,enrolledoCourses:userData.enrolledoCourses});
+        
+        res.json({success:true,enrolledoCourses:userData.enrolledoCourses?userData.enrolledoCourses:""});
 
     }catch(err){
         res.json({success:false,message:err.message});
@@ -35,8 +36,7 @@ export const userEnrolledCourses=async(req,res)=>{
 //Purchase course
 export const purchaseCourse=async(req,res)=>{
     try{
-        console.log(req.auth);
-        console.log("p khatam");
+    
         const{courseId}=req.body; 
         const{origin}=req.headers;
         const userId=req.auth.userId;

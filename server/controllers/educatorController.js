@@ -19,7 +19,6 @@ export const updateRoleToEducator = async (req, res) => {
 
 export const addCourse = async (req, res) => {
   try {
-    console.log("Auth Data:", req.auth);
     const { courseData } = req.body;
     const imageFile = req.file;
     const educatorId = req.auth?.userId;

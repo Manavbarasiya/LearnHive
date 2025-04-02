@@ -19,7 +19,6 @@ const Dashboard = () => {
 
       if(data.success){
         setDashBoardData(data.dashboardData);
-        console.log(data.dashboardData);
       }else{
         toast.error(data.message);
       }

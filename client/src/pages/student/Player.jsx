@@ -56,7 +56,6 @@ const Player = () => {
         { courseId, lectureId },
         { headers: { Authorization: `Bearer ${token}` } } 
       );
-      console.log(data);
       if (data.success) {
         toast.success(data.message);
         getCourseProgress();
@@ -79,7 +78,6 @@ const Player = () => {
       if (data.success) {
         setProgressData(data.progressData);
       } else {
-        console.log("getCourseProgress");
         toast.error(data.message);
       }
     } catch (error) {

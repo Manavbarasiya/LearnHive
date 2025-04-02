@@ -1,9 +1,5 @@
 {
-  "builds": [
-    {
-      "src": "client/dist/**/*",
-      "use": "@vercel/static"
-    }
-  ],
-  "outputDirectory": "client/dist"
+  "rewrites":[
+    {"source":"/(.*)","destination":"/"}
+  ]
 }

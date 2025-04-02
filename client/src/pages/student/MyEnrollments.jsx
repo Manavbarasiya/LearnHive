@@ -64,7 +64,7 @@ const MyEnrollments = () => {
             </tr>
           </thead>
           <tbody>
-            {enrolledCourses.map((course, index) => {
+            {enrolledCourses && enrolledCourses.map((course, index) => {
               // Get progress for the current course
               const progress = progressArray[index];
 

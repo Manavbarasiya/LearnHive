@@ -30,15 +30,13 @@ const CourseDetails = () => {
   const fetchData = async () => {
     try {
         const {data}=await axios.get(backendUrl+'/api/course/'+id);
-        console.log(data);
+        
         if(data.success){
           setCourseData(data.courseData);
         }else{
-          // console.log("yele")
           toast.error(data.message);
         }
     } catch (error) {
-      
       toast.error(error.message);
       
     }
