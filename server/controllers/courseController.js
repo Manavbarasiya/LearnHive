@@ -4,6 +4,7 @@ import Course from "../models/Course.js";
 export const getAllCourses=async(req,res)=>{
     try{
         const course=await Course.find({isPublished:true}).select(["-courseContent","-enrolledStudents"]).populate({path:'educator'});
+        console.log(course);
         res.json({success:true,course});
     }catch(err){
         res.json({success:false,message:err.message});
